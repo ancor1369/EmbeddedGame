@@ -32,7 +32,7 @@ C_DEPS += \
 freertos/src/%.o: ../freertos/src/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: MCU C Compiler'
-	arm-none-eabi-gcc -D__REDLIB__ -DDEBUG -D__CODE_RED -D__USE_LPCOPEN -DCORE_M3 -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_chip_175x_6x/inc" -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_board_nxp_lpcxpresso_1769/inc" -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/gameEngine/freertos/inc" -O0 -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m3 -mthumb -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	arm-none-eabi-gcc -D__REDLIB__ -DDEBUG -D__CODE_RED -D__USE_LPCOPEN -DCORE_M3 -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_chip_175x_6x/inc" -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_board_nxp_lpcxpresso_1769/inc" -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/gameEngine/freertos/inc" -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/gameEngine/src/inc" -I"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/gameEngine/src/Tasks" -O0 -g3 -Wall -c -fmessage-length=0 -fno-builtin -ffunction-sections -fdata-sections -mcpu=cortex-m3 -mthumb -D__REDLIB__ -fstack-usage -specs=redlib.specs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

@@ -15,5 +15,6 @@ C_DEPS :=
 # Every subdirectory with source files must be described here
 SUBDIRS := \
 freertos/src \
+src/Tasks \
 src/src \
 
