@@ -31,7 +31,7 @@ all: gameEngine.axf
 gameEngine.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: MCU Linker'
-	arm-none-eabi-gcc -nostdlib -L"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_chip_175x_6x/Debug" -L"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_board_nxp_lpcxpresso_1769/Debug" -Xlinker -Map="gameEngine.map" -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb -T "gameEngine_Debug.ld" -o "gameEngine.axf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-gcc -nostdlib -L"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_chip_175x_6x/Debug" -L"/home/andres/Documents/EMBT/Term3/Ese3025/EmbeddedGame/GameEngine/lpc_board_nxp_lpcxpresso_1769/Debug" -Xlinker -Map="gameEngine.map" -Xlinker --gc-sections -mcpu=cortex-m3 -mthumb -T "freertos_blinky_Debug.ld" -o "gameEngine.axf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 	$(MAKE) --no-print-directory post-build
