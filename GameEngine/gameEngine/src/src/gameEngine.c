@@ -8,6 +8,12 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "uart.h"
+#include "KYPD.h"
+#include "commonData.h"
+#include "KYPD_Task.h"
+
+pressedKey key;
+
 
 /* Sets up system hardware */
 static void prvSetupHardware(void)
@@ -20,7 +26,6 @@ static void prvSetupHardware(void)
 	Board_LED_Set(1, true);
 	Board_LED_Set(3, true);
 }
-
 
 
 /* LED1 toggle thread */
@@ -53,6 +58,8 @@ int main(void)
 {
 	prvSetupHardware();
 
+	key.colRow = -1;
+	key.key = -1;
 	/* LED1 toggle thread */
 	xTaskCreate(vLEDTask1, (signed char *) "vTaskLed1",
 				configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 1UL),
@@ -67,6 +74,10 @@ int main(void)
 	xTaskCreate(vTaskUART,(signed char *) "CommunicationTask",
 				configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 1UL),
 				(xTaskHandle *) NULL);
+
+	xTaskCreate(KeyPadTask,(signed char *) "CommunicationTask",
+					configMINIMAL_STACK_SIZE, &key, (tskIDLE_PRIORITY + 1UL),
+					(xTaskHandle *) NULL);
 
 	/* Start the scheduler */
 	vTaskStartScheduler();
