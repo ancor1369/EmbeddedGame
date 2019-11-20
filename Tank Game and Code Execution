@@ -11,5 +11,5 @@ Game Design:
 
 The game consists of three horizontally moving sprites, which serve as the targets for the player. At the side of the screen, 
 we have the tank, which the user can control. The tank is used to fire bullets at the target by pressing assign button. 
-The left/right motion of the tank is controlled by the directional arrow keys using controller
+The up/down motion of the tank is controlled by the directional arrow keys using controller
 
