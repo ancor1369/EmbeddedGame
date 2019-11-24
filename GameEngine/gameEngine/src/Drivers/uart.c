@@ -10,7 +10,7 @@
  *
  */
 
-#include "uart.h"
+#include "../Drivers/uart.h"
 
 RINGBUFF_T txring, rxring;
 uint8_t rxbuff[UART_RRB_SIZE], txbuff[UART_SRB_SIZE];

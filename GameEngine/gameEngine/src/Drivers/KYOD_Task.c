@@ -5,9 +5,9 @@
  *      Author: andres
  */
 
-#include "commonData.h"
-#include "KYPD_Task.h"
-#include "uart.h"
+#include <commonData.h>
+#include <KYPD_Task.h>
+#include "../Drivers/uart.h"
 
 void KeyPadTask(void *pvParameters)
 {
@@ -37,8 +37,6 @@ void KeyPadTask(void *pvParameters)
 		//if( key->colRow != -1)
 		if(kk != -1)
 		{
-			//Chip_UART_Send(UART_SELECTION, key->colRow, 1);
-			//Chip_UART_Send(UART_SELECTION, kk, 1);
 			char result = Letter[kk];
 			Chip_UART_Send(UART_SELECTION, &result, 1);
 

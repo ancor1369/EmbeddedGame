@@ -1,18 +1,26 @@
 /*
- * @Andres Rogelio Cordoba
+ * node.c
  *
- * This is the main implementation of the game Engine.
+ *  Created on: Nov. 23, 2019
+ *      Author: Andres Rogelio Cordoba
+ *		Email: ancor1369@gmail.com
  */
+
 
 #include "board.h"
 #include "FreeRTOS.h"
 #include "task.h"
-#include "uart.h"
-#include "KYPD.h"
+#include "gameTasks.h"
 #include "commonData.h"
+#include "KYPD.h"
 #include "KYPD_Task.h"
+#include "uart.h"
+
+
+
 
 pressedKey key;
+
 
 
 /* Sets up system hardware */
@@ -41,32 +49,15 @@ static void vLEDTask1(void *pvParameters) {
 	}
 }
 
-/* LED2 toggle thread */
-static void vLEDTask2(void *pvParameters) {
-	bool LedState = false;
-	while (1) {
-		Board_LED_Set(1, LedState);
-		LedState = (bool) !LedState;
-
-		/* About a 7Hz on/off toggle rate */
-		vTaskDelay(configTICK_RATE_HZ / 3);
-	}
-}
-
-
 int main(void)
 {
 	prvSetupHardware();
+
 
 	key.colRow = -1;
 	key.key = -1;
 	/* LED1 toggle thread */
 	xTaskCreate(vLEDTask1, (signed char *) "vTaskLed1",
-				configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 1UL),
-				(xTaskHandle *) NULL);
-
-	/* LED2 toggle thread */
-	xTaskCreate(vLEDTask2, (signed char *) "vTaskLed2",
 				configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 1UL),
 				(xTaskHandle *) NULL);
 
@@ -78,6 +69,9 @@ int main(void)
 	xTaskCreate(KeyPadTask,(signed char *) "CommunicationTask",
 					configMINIMAL_STACK_SIZE, &key, (tskIDLE_PRIORITY + 1UL),
 					(xTaskHandle *) NULL);
+
+	xTaskCreate(vTaskCollisions,(signed char *)"CollisionsTask",configMINIMAL_STACK_SIZE,
+			NULL,(tskIDLE_PRIORITY + 5UL),(xTaskHandle*) NULL);
 
 	/* Start the scheduler */
 	vTaskStartScheduler();

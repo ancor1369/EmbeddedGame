@@ -8,7 +8,7 @@
 #ifndef TASKS_KYPD_TASK_H_
 #define TASKS_KYPD_TASK_H_
 
-#include "KYPD.h"
+#include "../Drivers/KYPD.h"
 
 void KeyPadTask(void *pvParameters);
 

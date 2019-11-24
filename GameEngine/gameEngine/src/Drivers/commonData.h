@@ -2,7 +2,7 @@
  * commonData.h
  *
  *  Created on: Nov. 17, 2019
- *      Author: andres rogelio cordoba
+ *      Author: Andres Rogelio Cordoba
  */
 
 #ifndef TASKS_COMMONDATA_H_
