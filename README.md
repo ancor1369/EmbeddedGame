@@ -1,7 +1,8 @@
 # EmbeddedGame
 FreeRTOs video game 
 
-This game is going to implement a game engine using FreeRTOS
+
+This game is going to implement a game engine using FreeRTOS with arduino uno and creating a powerful game engine which can contol all the movements 
 
 
 ![image](https://user-images.githubusercontent.com/25968721/69000957-d6d28100-08a4-11ea-8868-0c40c0d90aa6.png)
@@ -14,4 +15,5 @@ a [PModKYPD keypad](https://reference.digilentinc.com/reference/pmod/pmodkypd/st
 ![image](https://user-images.githubusercontent.com/25968721/69020426-6b5ee100-0982-11ea-8965-0ffb3c7a3e35.png)
 
 This documentation will be further updated
+
 

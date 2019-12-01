@@ -1,0 +1,15 @@
+  THE TANK GAME
+
+This project is a major game project, as the prime requirement here, is to synchronize all the tasks of a game with LPC1769 
+and Arduino uno and creating a game engine which can control the all the actions and movements of tank and enemy so that 
+we can control every graphics.
+
+From the very beginning, it was evident to us, that the conventional Infinite loop approach won’t be as efficient, as the 
+code length would be enormous since we would have to write the code for the scheduler ourselves.
+
+  GAME DESIGN:
+
+The game consists of three horizontally moving sprites, which serve as the targets for the player. At the side of the screen, 
+we have the tank, which the user can control. The tank is used to fire bullets at the target by pressing assign button. 
+The up/down motion of the tank is controlled by the directional arrow keys using controller...
+
