@@ -9,6 +9,12 @@
 #ifndef GAMETASKS_H_
 #define GAMETASKS_H_
 #include "FreeRTOS.h"
+#include "task.h"
+#include "gameTasks.h"
+#include "commonData.h"
+#include "KYPD.h"
+#include "KYPD_Task.h"
+#include "uart.h"
 
 /*
  * Name: GameInit
@@ -16,7 +22,7 @@
  * Description: Creates the initial state of the game making sure that everythin
  * is in place as needed to start a new game.
  */
-void GameInit();
+void vGameInit();
 /*
  * Name: vTaskCollisions
  * Parameters: a pvParameter to send initialization variables to the task
@@ -24,12 +30,5 @@ void GameInit();
  * characters on the screen and makes sure that
  */
 void vTaskCollisions(void *pvParameters);
-
-
-/*
- *
- */
-
-
 
 #endif /* GAMETASKS_H_ */

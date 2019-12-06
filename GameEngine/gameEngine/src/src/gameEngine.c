@@ -69,9 +69,9 @@ int main(void)
 	xTaskCreate(KeyPadTask,(signed char *) "CommunicationTask",
 					configMINIMAL_STACK_SIZE, &key, (tskIDLE_PRIORITY + 1UL),
 					(xTaskHandle *) NULL);
-
-	xTaskCreate(vTaskCollisions,(signed char *)"CollisionsTask",configMINIMAL_STACK_SIZE,
-			NULL,(tskIDLE_PRIORITY + 5UL),(xTaskHandle*) NULL);
+//
+//	xTaskCreate(vTaskCollisions,(signed char *)"CollisionsTask",configMINIMAL_STACK_SIZE,
+//			NULL,(tskIDLE_PRIORITY + 5UL),(xTaskHandle*) NULL);
 
 	/* Start the scheduler */
 	vTaskStartScheduler();

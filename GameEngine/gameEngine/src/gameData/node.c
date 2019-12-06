@@ -38,7 +38,7 @@ node_t* createHead(character data)
 node_t* createNode(void)
 {
     //Creates a dinamic space of memory to hold the new node
-    node_t* pNew = (node_t*)malloc(sizeof(node_t));
+    node_t* pNew = (node_t*)pvPortMalloc(sizeof(node_t));
     pNew->pNext = NULL;
     return pNew;
 }
@@ -56,7 +56,7 @@ void deleteNode(node_t* pHead, character target)
     if((pw->pNext)!= NULL)    
     {
         node_t *pSave = pw->pNext;
-        free((void*)pw);
+        vPortFree((void*)pw);
         ppw->pNext = pSave;
     }
     else

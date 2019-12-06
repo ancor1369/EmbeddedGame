@@ -22,24 +22,17 @@ void KeyPadTask(void *pvParameters)
 
 	char Letter [16]={'D','E','F','0','C','9','8','7','B','6','5','4','A','3','2','1'};
 
-
-
 	setPins(row,col);
 	setKeyMap(keyTable);
 	begin();
 	int kk = -1;
 	while(1)
 	{
-
-
-
 		kk = getKey();
-		//if( key->colRow != -1)
 		if(kk != -1)
 		{
 			char result = Letter[kk];
 			Chip_UART_Send(UART_SELECTION, &result, 1);
-
 			kk = -1;
 		}
 		vTaskDelay(configTICK_RATE_HZ/8);

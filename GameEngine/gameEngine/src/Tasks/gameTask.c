@@ -25,12 +25,12 @@ const dimension dimTank =
 };
 const dimension dimAlien =
 {
-		.height = 16,
-		.width = 16
+	.height = 16,
+	.width = 16
 };
 
 
-void GameInit()
+void vGameInit()
 {
 	//Create a Tank, this one is going to be the head of the
 	//Linked list that will contain those
@@ -46,7 +46,8 @@ void GameInit()
 	tankOne.objectID = 0;
 	tankOne.characterID = Tank;
     tankOne.dimensions = dimTank;
-    tankOne.coordinates = c;
+    tankOne.go_Position = c;
+
 
 	pHeadChara = createHead(tankOne);
 
@@ -62,14 +63,15 @@ void GameInit()
 	alien.objectID = 1;
 	alien.characterID = Small_Allien;
 	alien.dimensions = dimAlien;
-	alien.coordinates = b;
+	alien.go_Position = b;
+
 
 	addNode(pHeadChara, alien);
 }
 
 void vTaskCollisions(void * pvParameters)
 {
-	GameInit();
+	vGameInit();
 
 	while(1)
 	{

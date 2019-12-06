@@ -6,6 +6,8 @@
  *		Email: ancor1369@gmail.com
  */
 
+#include "FreeRTOS.h"
+
 enum enumCharacter
 {
 	Tank = 1,
@@ -46,13 +48,15 @@ struct go_coordinate
  */
 typedef struct go_coordinate coordinate;
 
-
 struct go_gameCharacter
 {
 	size_t objectID;
 	characterNames characterID;
-	coordinate coordinates;
+	coordinate go_Position;
+	coordinate go_Speed;
 	dimension dimensions;
+	struct go_gameCaracter *pNext; //Pointer to the next location of the character
+
 };
 /*
  * Name: character
