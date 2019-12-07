@@ -30,6 +30,12 @@ char rx_buff[UART_RRB_SIZE];
 char tx_buff[UART_SRB_SIZE];
 
 
+
+void vSendMessage(char *buff[],int size)
+{
+	Chip_UART_SendRB(UART_SELECTION, &txring, buff, size-1);
+}
+
 /**
  * @brief LED task
  * @param pvParameters
@@ -65,6 +71,9 @@ void vTaskUART(void *pvParameters)
 	char buf[] = "Initialization of the part interface active\r\n";
 	Chip_UART_SendRB(UART_SELECTION, &txring, buf, sizeof(buf) - 1);
 
+	//This is not actually used in the video game, I have
+	//set this into place just to show that the serial communication
+	//is working in both ways.
 	while (1)
 	{
 		Board_LED_Set(2,false);

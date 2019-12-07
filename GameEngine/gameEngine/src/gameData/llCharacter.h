@@ -1,5 +1,5 @@
 /*
- * node.h
+ * character.h
  *
  *  Created on: Nov. 23, 2019
  *      Author: Andres Rogelio Cordoba
@@ -13,7 +13,7 @@
 #include "gameData.h"
 
 
-struct node_struct
+struct character_struct
 {
     character character;
     struct node_t *pNext;
@@ -22,20 +22,20 @@ struct node_struct
  *  Name: node_t
  * Description:
  * This is the data structure to support a 
- * Linked list node. 
+ * linked list for characters in the game.
  */
-typedef struct node_struct node_t;
+typedef struct character_struct go_character;
 
 
 
 
 /*
  * Name: CreateHead
- * data: infomation to be set as content of the head
+ * Data: i to be set as content of the head
  * Description:
  * Creates the first element to be used on the linked list.
  */
-node_t* createHead(character data);
+go_character* createHead(character data);
 /*
  *  Name: addNodeE:
  *  Parameters:
@@ -47,7 +47,7 @@ node_t* createHead(character data);
  *  better not to call this one. 
  * 
  */
-void addNode(node_t* pHead, character data);
+void addNode(go_character* pHead, character data);
 /*
  * Name: CreateNode
  * Parameters:
@@ -58,7 +58,7 @@ void addNode(node_t* pHead, character data);
  * is exclusively of the type node_t. It returns a 
  * pointer to the created node.
  */
-node_t* createNode(void);
+go_character* createNode(void);
 /*
  * Name: CreateHead 
  * Parameters: an data_struct variable
@@ -68,9 +68,9 @@ node_t* createNode(void);
  * passed as parameter. this method is intended to 
  * be called once per linked list to be created.
  */
-node_t* createHead(character data);
+go_character* createHead(character data);
 
-void printNodes(node_t *pHead);
+void printNodes(go_character *pHead);
 /*
  * Name:deleteNode
  * Parameters:
@@ -79,7 +79,7 @@ void printNodes(node_t *pHead);
  * to be eliminated from the linked list
  * Description: The method goes
  */
-void deleteNode(node_t * pHead,character target);
+void deleteNode(go_character * pHead,character target);
 /*
  * Name: getNode
  * Parameters: node_t pHead
@@ -87,7 +87,7 @@ void deleteNode(node_t * pHead,character target);
  * Retrieves the pointer of the target data that is passed to the
  * function.
  */
-node_t* getNode(node_t* pHead, character target);
+go_character* getNode(go_character* pHead, character target);
     
 
 

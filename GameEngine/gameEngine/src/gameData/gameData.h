@@ -23,6 +23,20 @@ enum enumCharacter
  */
 typedef enum enumCharacter characterNames;
 
+
+
+struct  keysGame{
+	int key;
+	int colRow;
+};
+
+/*
+ * Name: pressedKey
+ * Description: Represents the latest pressed key on the code that
+ * will determine the positions of the player on the screen
+ */
+typedef struct keysGame pressedKey;
+
 struct go_dimension
 {
 	unsigned int width;
@@ -55,8 +69,7 @@ struct go_gameCharacter
 	coordinate go_Position;
 	coordinate go_Speed;
 	dimension dimensions;
-	struct go_gameCaracter *pNext; //Pointer to the next location of the character
-
+	//xTaskHandle taskHandle;
 };
 /*
  * Name: character

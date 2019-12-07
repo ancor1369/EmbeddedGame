@@ -1,24 +1,24 @@
 /*
- * node.c
+ * character.c
  *
  *  Created on: Nov. 23, 2019
  *      Author: Andres Rogelio Cordoba
  *		Email: ancor1369@gmail.com
  */
 
-#include <node.h>
+#include <llCharacter.h>
 #include <stdlib.h>
 
-void addNode(node_t* pHead, character data)
+void addNode(go_character* pHead, character data)
 {
     //Create new node
-    node_t *pNode = createNode();
+	go_character *pNode = createNode();
     pNode->character = data;
     
     //Find the attatchement point for the new node
     //to be inserted
     
-    node_t *pw; //working pointer
+    go_character *pw; //working pointer
     pw = pHead;    
     while(pw->pNext != NULL)
     {
@@ -28,25 +28,26 @@ void addNode(node_t* pHead, character data)
     return;
 }
 
-node_t* createHead(character data)
+go_character* createHead(character data)
 {
     //creates the head of the whole
-    node_t *pHead = createNode();
+	go_character *pHead = createNode();
     pHead->character = data;
+    return pHead;
 }
 
-node_t* createNode(void)
+go_character* createNode(void)
 {
-    //Creates a dinamic space of memory to hold the new node
-    node_t* pNew = (node_t*)pvPortMalloc(sizeof(node_t));
+    //Creates a dynamic space of memory to hold the new node
+	go_character* pNew = (go_character*)pvPortMalloc(sizeof(go_character));
     pNew->pNext = NULL;
     return pNew;
 }
 
-void deleteNode(node_t* pHead, character target)
+void deleteNode(go_character* pHead, character target)
 {
-    node_t* pw= pHead; //Working pointer
-    node_t* ppw=pHead; //Working parent's pointer
+	go_character* pw= pHead; //Working pointer
+	go_character* ppw=pHead; //Working parent's pointer
     
     while((pw->character.objectID != target.objectID))
     {
@@ -55,7 +56,7 @@ void deleteNode(node_t* pHead, character target)
     }    
     if((pw->pNext)!= NULL)    
     {
-        node_t *pSave = pw->pNext;
+    	go_character *pSave = pw->pNext;
         vPortFree((void*)pw);
         ppw->pNext = pSave;
     }
@@ -65,7 +66,7 @@ void deleteNode(node_t* pHead, character target)
     }
 }
 
-void printNodes(node_t *pHead)
+void printNodes(go_character *pHead)
 {
 //    while( pHead->pNext != NULL)
 //    {
@@ -81,9 +82,9 @@ void printNodes(node_t *pHead)
 //    return;
 }
 
-node_t* getNode(node_t* pHead, character target)
+go_character* getNode(go_character* pHead, character target)
 {
-    node_t* pw; //Worker pointer
+	go_character* pw; //Worker pointer
     pw = pHead;
     
     while(pw->character.objectID != target.objectID)

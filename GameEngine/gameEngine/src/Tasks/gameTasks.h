@@ -8,27 +8,64 @@
 
 #ifndef GAMETASKS_H_
 #define GAMETASKS_H_
+#include <llCharacter.h>
+#include <stdio.h>
 #include "FreeRTOS.h"
 #include "task.h"
-#include "gameTasks.h"
-#include "commonData.h"
 #include "KYPD.h"
-#include "KYPD_Task.h"
 #include "uart.h"
+
 
 /*
  * Name: GameInit
- * Parameters: a pvParameter to send initialization variables to the task
+ * Parameters: Void
  * Description: Creates the initial state of the game making sure that everythin
  * is in place as needed to start a new game.
  */
 void vGameInit();
+
+/*
+ * Name: vTaskrunGame
+ * Parameters: pvParameters that is not going to carry any usefull information for
+ * this task.
+ * Description: Initialized the needed data structures to host the game and
+ * Additionally creates the tasks that will be done in all the game.
+ */
+void vTaskRunGame(void *pvParameters);
+
 /*
  * Name: vTaskCollisions
  * Parameters: a pvParameter to send initialization variables to the task
  * Description: Constantly verifies what is the current state of the
  * characters on the screen and makes sure that
  */
+
 void vTaskCollisions(void *pvParameters);
+
+
+/*
+ * Name:vKeyPadTask
+ * Description: This task handles the user inputs
+ * by getting the keys that are pressed and making sure
+ * everything is in place to make the correct implementation.
+ * This is an approach that runs in a polling mode.
+ */
+
+void vKeyPadTask(void *pvParameters);
+
+/*
+ * Name: vPlayerTask
+ * Parameters: pvParameters is an object that holds the information necessary
+ * for the task to run correctly.
+ * Description:Minds about where the tank is located at all times, updates
+ * the coordinates of the player, everything by taking into account the
+ * the user input.
+ */
+
+void vPlayerTask(void *pvParameters);
+
+
+
+
 
 #endif /* GAMETASKS_H_ */
