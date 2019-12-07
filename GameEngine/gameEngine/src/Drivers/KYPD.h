@@ -27,7 +27,7 @@
 /*				Include File Definitions						*/
 /* ------------------------------------------------------------ */
 
-#include "KYPD.h"
+#include "../Drivers/KYPD.h"
 #include "chip.h"
 #include "board.h"
 

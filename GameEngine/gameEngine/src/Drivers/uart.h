@@ -25,5 +25,6 @@ extern uint8_t rxbuff[UART_RRB_SIZE], txbuff[UART_SRB_SIZE];
 
 
 void vTaskUART(void *pvParameters);
+void vSendMessage(char *buff[], int size);
 
 #endif // UART_TASK_H
