@@ -6,9 +6,9 @@
  *		Email: ancor1369@gmail.com
  */
 
-#define sWidt 128
+#define sWidth 128
 #define sHight 64
-
+#define BuferSize 12
 
 #include "gameTasks.h"
 
@@ -71,9 +71,9 @@ void vGameInit()
 	pHeadChara = createHead(tankOne);
 
 //	coordinate b ={
-//		    		.x = sWidt - 10,
+//		    		.x = sWidthhh - 10,
 //					.y = sHight - 10,
-//					.x_offset = (sWidt - 10) -(dimAlien.height/2),
+//					.x_offset = (sWidthhh - 10) -(dimAlien.height/2),
 //					.y_offset = (sHight - 10) - (dimAlien.width/2)
 //		    };
 //
@@ -136,10 +136,10 @@ void vPlayerTask(void *pvParameters)
 			//Up
 			case '2':
 			{
-				pHeadChara->character.go_Position.x += 1;
-				if(pHeadChara->character.go_Position.x > 127)
+				pHeadChara->character.go_Position.y -= 1;
+				if(pHeadChara->character.go_Position.y <= 0)
 				{
-					pHeadChara->character.go_Position.x = 127;
+					pHeadChara->character.go_Position.y = sHight;
 				}
 				keyPressed = 'N';
 			}
@@ -147,10 +147,10 @@ void vPlayerTask(void *pvParameters)
 			//Left
 			case '4':
 			{
-				pHeadChara->character.go_Position.y += 1;
-				if(pHeadChara->character.go_Position.y > 63)
+				pHeadChara->character.go_Position.x -= 1;
+				if(pHeadChara->character.go_Position.x <= 0)
 				{
-					pHeadChara->character.go_Position.x = 63;
+					pHeadChara->character.go_Position.x = sWidth;
 				}
 				keyPressed = 'N';
 			}
@@ -158,10 +158,10 @@ void vPlayerTask(void *pvParameters)
 			//Right
 			case '6':
 			{
-				pHeadChara->character.go_Position.y -= 1;
-				if(pHeadChara->character.go_Position.y  < 0)
+				pHeadChara->character.go_Position.x += 1;
+				if(pHeadChara->character.go_Position.x >= sWidth)
 				{
-					pHeadChara->character.go_Position.y = 0;
+					pHeadChara->character.go_Position.x = 0;
 				}
 				keyPressed = 'N';
 			}
@@ -169,10 +169,10 @@ void vPlayerTask(void *pvParameters)
 			//Down
 			case '8':
 			{
-				pHeadChara->character.go_Position.x -= 1;
-				if(pHeadChara->character.go_Position.x < 0)
+				pHeadChara->character.go_Position.y += 1;
+				if(pHeadChara->character.go_Position.y >= sHight)
 				{
-					pHeadChara->character.go_Position.x = 0;
+					pHeadChara->character.go_Position.y = 0;
 				}
 				keyPressed = 'N';
 			}
@@ -186,22 +186,26 @@ void vPlayerTask(void *pvParameters)
 			default:
 				break;
 		}
-
 		vTaskDelay(configTICK_RATE_HZ/20);
 	}
 }
 
 void vTaskCollisions(void * pvParameters)
 {
-	char buffer[12];
+	char buffer[BuferSize];
+	char commit[] = "Z";
 	char devider[] = "\r\n";
 	while(1)
 	{
-
+		for(uint8_t i = 0;i<BuferSize;i++)
+		{
+			buffer[i]=' ';
+		}
 		//Simulate the package construction and then send the message through the interface
 		sprintf(buffer,"%d,%d,%d,%d",1,1,pHeadChara->character.go_Position.x,pHeadChara->character.go_Position.y);
 		//It will send only the data so far
 		vSendMessage(&buffer,sizeof(buffer));
+		vSendMessage(commit, sizeof(commit));
 		vSendMessage(devider, sizeof(devider));
 		/*TODO: Create the physics engine inside this loop.
 		 * Make sure every speed is calculated here
@@ -238,7 +242,7 @@ void vKeyPadTask(void *pvParameters)
 		{
 			char result = Letter[kk];
 			keyPressed = result;
-			Chip_UART_Send(UART_SELECTION, &result, 1);
+			//Chip_UART_Send(UART_SELECTION, &result, 1);
 			kk = -1;
 		}
 		vTaskDelay(configTICK_RATE_HZ/30);

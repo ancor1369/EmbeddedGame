@@ -97,11 +97,9 @@ for(;;) { // Loop forever...
         icons[f][YPOS]   = ymi;       
       }
     }
+
   }
 }
-
-
-
 
 void serialEvent() {  
   while (Serial.available()) {
@@ -119,7 +117,7 @@ void serialEvent() {
       Serial.println(inputString);            
       sscanf(inputString.c_str(),"%d,%d,%d,%d",&scene,&Bitmap,&xt,&yt);
       //This needs to go into the queue and then we can make this program to work as expected
-      //This is just a test to mive the characters as desired
+      //This is just a test to move the characters as desired
       if(Bitmap==1)
       {
         x=xt;
