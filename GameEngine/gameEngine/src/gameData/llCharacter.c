@@ -9,7 +9,7 @@
 #include <llCharacter.h>
 #include <stdlib.h>
 
-void addNode(go_character* pHead, character data)
+go_character* addNode(go_character* pHead, character data)
 {
     //Create new node
 	go_character *pNode = createNode();
@@ -25,12 +25,12 @@ void addNode(go_character* pHead, character data)
         pw = pw->pNext;
     }    
     pw->pNext = pNode;
-    return;
+    return pNode;
 }
 
 go_character* createHead(character data)
 {
-    //creates the head of the whole
+    //creates the head of the whole linked list
 	go_character *pHead = createNode();
     pHead->character = data;
     return pHead;
@@ -68,26 +68,14 @@ void deleteNode(go_character* pHead, character target)
 
 void printNodes(go_character *pHead)
 {
-//    while( pHead->pNext != NULL)
-//    {
-//        printf("%d\n",pHead->data.id);
-//        printf("%s\n",pHead->data.message);
-//        pHead = pHead->pNext;
-//    }
-//    if(pHead->pNext == NULL)
-//    {
-//        printf("%d\n",pHead->data.id);
-//        printf("%s\n",pHead->data.message);
-//    }
-//    return;
 }
 
-go_character* getNode(go_character* pHead, character target)
+go_character* getNode(go_character* pHead, uint8_t target)
 {
 	go_character* pw; //Worker pointer
     pw = pHead;
     
-    while(pw->character.objectID != target.objectID)
+    while(pw->character.objectID != objectID)
     {
         pw = pHead->pNext;
     }

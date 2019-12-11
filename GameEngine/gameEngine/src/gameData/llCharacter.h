@@ -11,12 +11,13 @@
 
 #include <string.h>
 #include "gameData.h"
-
+#include "task.h"
 
 struct character_struct
 {
     character character;
-    struct node_t *pNext;
+    xTaskHandle handle;
+    struct character *pNext;
 };    
 /*
  *  Name: node_t
@@ -47,7 +48,7 @@ go_character* createHead(character data);
  *  better not to call this one. 
  * 
  */
-void addNode(go_character* pHead, character data);
+go_character* addNode(go_character* pHead, character data);
 /*
  * Name: CreateNode
  * Parameters:

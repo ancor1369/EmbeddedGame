@@ -18,9 +18,9 @@ static void prvSetupHardware(void)
 	SystemCoreClockUpdate();
 	Board_Init();
 	/* Initial LED0 state is off */
-	Board_LED_Set(0, true);
-	Board_LED_Set(1, true);
-	Board_LED_Set(3, true);
+	Board_LED_Set(0, false);
+	Board_LED_Set(1, false);
+	Board_LED_Set(2, false);
 }
 
 /*
@@ -33,11 +33,9 @@ int main(void)
 {
 	prvSetupHardware();
 
-	xTaskCreate(vTaskRunGame,(signed char *)"runGame",configMINIMAL_STACK_SIZE,
-			NULL,(tskIDLE_PRIORITY + 5UL),(xTaskHandle*) NULL);
-
-	/* Start the scheduler */
-	vTaskStartScheduler();
+	//Once the program gets into
+	//this function, the game satarts to play
+	vGameInit();
 
 	/* Should never arrive here */
 	return 1;
