@@ -75,12 +75,12 @@ go_character* getNode(go_character* pHead, uint8_t target)
 	go_character* pw; //Worker pointer
     pw = pHead;
     
-    while(pw->character.objectID != objectID)
+    while(pw->character.objectID != target)
     {
         pw = pHead->pNext;
     }
     //Making sure the selected target is the one we are seeking
-    if(pw->character.objectID == target.objectID)
+    if(pw->character.objectID == target)
     {
         return pw;
     }

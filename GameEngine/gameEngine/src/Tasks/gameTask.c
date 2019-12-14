@@ -43,7 +43,13 @@ const dimension dimBullet =
 	.width = 12
 };
 
-const cordinate bulletSpeed =
+const dimension dimBigAllien =
+{
+		.height = 12,
+		.width = 12
+};
+
+const coordinate bulletSpeed =
 {
 		.x = 3,
 		.y = 0
@@ -115,7 +121,7 @@ void vGameInit()
 	coordinate aa =
 	{
 		.x=3,
-		y=0
+		.y=0
 	};
 
 	character missile;
@@ -127,8 +133,6 @@ void vGameInit()
 	//data structure gets initialized and ready to be processed
 	pHeadMissile = createHead(missile);
 	pHeadMissile->handle = NULL;
-
-
 
 	/*
 	 * Create the tasks that are needed to
@@ -154,6 +158,8 @@ void vGameInit()
 	xTaskCreate(vPlayerTask, (signed char *) "PlayerTask",
 					configMINIMAL_STACK_SIZE, NULL,(tskIDLE_PRIORITY + 3UL),
 					&pHeadPlayer->handle);
+
+
 
 	//Create the tasks for missiles and aliens
 
@@ -222,7 +228,8 @@ void vPlayerTask(void *pvParameters)
 				 * 3. Get the handle for the new task
 				 * 4. Initiate the new task for missiles so they go on their own
 				 */
-				numMissiles += 1;
+				//numMissiles += 1;
+				numMissiles = 0;
 				coordinate m =
 				{
 						.x = pHeadPlayer->character.go_Position.x,
@@ -237,12 +244,22 @@ void vPlayerTask(void *pvParameters)
 					.dimensions = dimBullet,
 					.visible = true
 				};
+
+				pHeadMissile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
+				pHeadMissile->character.go_Position.y = pHeadPlayer->character.go_Position.y;
+
 				//add the node to the linked list
-				go_character *pMisssile = addNode(pHeadMissile, missile);
+				//go_character *pMisssile = addNode(pHeadMissile, missile);
+
+//				xTaskCreate(vMissileTask,(signed char *)"missileTask",
+//						configMINIMAL_STACK_SIZE,&numMissiles, (tskIDLE_PRIORITY + 1UL),NULL);
+						//&pMisssile->handle);
+						//&pHeadMissile->handle);
 
 				xTaskCreate(vMissileTask,(signed char *)"missileTask",
-						configMINIMAL_STACK_SIZE,&numMissiles, (tskIDLE_PRIORITY + 1UL),
-						&pMisssile->handle);
+										configMINIMAL_STACK_SIZE,NULL, (tskIDLE_PRIORITY + 1UL),(xTaskHandle *)NULL);
+
+				keyPressed = 'N';
 
 			}
 				break;
@@ -262,25 +279,37 @@ void vMissileTask(void * pvParameters)
 	 * speed
 	 */
 
-	uint8_t missileNumber = (uint8_t*)pvParameters;
+	//uint8_t missileNumber = (uint8_t*)pvParameters;
 	go_character *missile = NULL;
 
+	uint8_t missileNumber = 0;
+	missile = pHeadMissile;
+	//Advance the missile when it is running
+    //missile = getNode(pHeadMissile, missileNumber);
 	while(1)
 	{
-		  missle = getNode(pHeadMissile, missileNumber);
 
+
+		  //if(missile->character.objectID != 0)
+		  {
+			  //uint8_t speed = missile->character.go_Speed.x / 4;
+			  missile->character.go_Position.x += 1;//speed;
+
+			  //Just to show functioning performance
+			  if(missile->character.go_Position.x >= sWidth)
+			  {
+				  missile->character.go_Position.x = 0;
+			  }
+		  }
+		  vTaskDelay(configTICK_RATE_HZ/20);
 	}
-
 }
 
 void vTaskCollisions(void * pvParameters)
 {
-	//this task takes all the linked lists
-	//containing the players and computes the
-	//relationships between them, so it is possible
-	//to set some of them to disappear as consequence
+	//this task takes all the linked lists containing the players and computes the
+	//relationships between them, so it is possible to set some of them to disappear as consequence
 	//of the collision between objects.
-
 
 //	pHeadAlien;
 //	pHeadMissile;
@@ -289,12 +318,10 @@ void vTaskCollisions(void * pvParameters)
 	char buffer[BuferSize];
 	char commit[] = "Z";
 	char devider[] = "\r\n";
+	go_character *ptrCht;
 	while(1)
 	{
-
-
-
-		//At the end of the day this is what needs to be done with all the
+		//At the end of the day this is what needs to be done with all thepHeadMissile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
 		//Characters, which is to extract all their coordinates and use them
 		//to send the whole message with a set of screen updates for the
 		//Arduino.
@@ -303,19 +330,66 @@ void vTaskCollisions(void * pvParameters)
 			buffer[i]=' ';
 		}
 		//Simulate the package construction and then send the message through the interface
-		sprintf(buffer,"%d,%d,%d,%d",1,1,pHeadPlayer->character.go_Position.x,pHeadPlayer->character.go_Position.y);
+		sprintf(buffer,"%d,%d,%d,%d",1,pHeadPlayer->character.characterID,pHeadPlayer->character.go_Position.x,pHeadPlayer->character.go_Position.y);
 		//It will send only the data so far
 		vSendMessage(&buffer,sizeof(buffer));
 		vSendMessage(commit, sizeof(commit));
 		vSendMessage(devider, sizeof(devider));
+
+
+		//changes done to take the whole thinking up and running.
+
+		//Run all the linked list and make sure it sends all the coordinates of all the characters
+
+//		bool cont = true;
+//		ptrCht = pHeadAlien;
+//		while(cont)
+//		{
+//			for(uint8_t i = 0;i<BuferSize;i++)
+//			{
+//				buffer[i]=' ';
+//			}
+//			sprintf(buffer,"%d,%d,%d,%d",1,ptrCht->character.characterID,ptrCht->character.go_Position.x,ptrCht->character.go_Position.y);
+//			vSendMessage(&buffer,sizeof(buffer));
+//			vSendMessage(commit, sizeof(commit));
+//			vSendMessage(devider, sizeof(devider));
+//			ptrCht = ptrCht->pNext;
+//			if(ptrCht->pNext == NULL)
+//			{
+//				cont = false;
+//			}
+//		}
+
+		bool cont = true;
+		ptrCht = pHeadMissile;
+		//while(cont)
+		//if(numMissiles == 1)
+		{
+
+			for(uint8_t i = 0;i<BuferSize;i++)
+			{
+				buffer[i]=' ';
+			}
+			sprintf(buffer,"%d,%d,%d,%d",1,ptrCht->character.characterID,ptrCht->character.go_Position.x,ptrCht->character.go_Position.y);
+			vSendMessage(&buffer,sizeof(buffer));
+			vSendMessage(commit, sizeof(commit));
+			vSendMessage(devider, sizeof(devider));
+//			if(ptrCht->pNext == NULL)
+//			{
+//				cont = false;
+//			}
+//			ptrCht = ptrCht->pNext;
+		}
+
+
 		/*TODO: Create the physics engine inside this loop.
 		 * Make sure every speed is calculated here
 		 * and that all the coordinates to be
-		 * sent on the serial interface are calculated here.
+		 * sent on the serial interface are calculated hmissileNumberere.
 		 *
 		 * Different tasks are created and destroyed inside this one
 		*/
-		vTaskDelay(configTICK_RATE_HZ/50);
+		vTaskDelay(configTICK_RATE_HZ/20);
 	}
 }
 

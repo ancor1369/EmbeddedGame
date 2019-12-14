@@ -88,7 +88,7 @@ void deleteNode(go_character * pHead,character target);
  * Retrieves the pointer of the target data that is passed to the
  * function.
  */
-go_character* getNode(go_character* pHead, character target);
+go_character* getNode(go_character* pHead, uint8_t target);
     
 
 
