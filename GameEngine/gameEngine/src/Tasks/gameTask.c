@@ -236,15 +236,11 @@ void vPlayerTask(void *pvParameters)
 					.dimensions = dimBullet,
 					.visible = true
 				};
-
-				pHeadMissile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
-				pHeadMissile->character.go_Position.y = pHeadPlayer->character.go_Position.y;
 				//add the node to the linked list
 				go_character *pMisssile = addNode(pHeadMissile, missile);
 
 				xTaskCreate(vMissileTask,(signed char *)"missileTask",
 						configMINIMAL_STACK_SIZE,&numMissiles, (tskIDLE_PRIORITY + 1UL),
-						//&pHeadMissile->handle);
 						&pMisssile->handle);
 				keyPressed = 'N';
 			}
@@ -269,17 +265,15 @@ void vMissileTask(void * pvParameters)
 	/*This task needs to get the missile that was assigned to the task and
 	 * will update all its characteristics,speed
 	 */
-
-	//uint8_t missileNumber = (uint8_t*)pvParameters;
+	uint8_t *missileNumber = (uint8_t*)pvParameters;
 	go_character *missile = NULL;
-
-	uint8_t missileNumber = 0;
-	missile = pHeadMissile;
-	//Advance the missile when it is running
-    //missile = getNode(pHeadMissile, missileNumber);
+	//The missileNumber needs to be dereferenced because it is a pointer, I am interested
+	//in its content rather than its location
+    missile = getNode(pHeadMissile, *missileNumber);
 	while(1)
 	{
-	  missile->character.go_Position.x += 1;
+	   //Advance the missile when it is running
+	   missile->character.go_Position.x += missile->character.go_Speed.x;
 
 	  if(missile->character.go_Position.x >= sWidth)
 	  {
@@ -294,14 +288,11 @@ void vTaskCollisions(void * pvParameters)
 	//this task takes all the linked lists containing the players and computes the
 	//relationships between them, so it is possible to set some of them to disappear as consequence
 	//of the collision between objects.
-
-//	pHeadAlien;
-//	pHeadMissile;
-//	pHeadPlayer;
 	char commit[] = "Z";
 	char devider[] = "\r\n";
 	char buffer[BuferSize];
-	go_character *ptrCht;
+	go_character *ptrCht = NULL;
+
 	while(1)
 	{
 		//At the end of the day this is what needs to be done with all thepHeadMissile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
@@ -318,26 +309,25 @@ void vTaskCollisions(void * pvParameters)
 		vSendMessage(commit, sizeof(commit));
 		vSendMessage(devider, sizeof(devider));
 
-		bool cont = true;
-		ptrCht = pHeadMissile;
-		//while(cont)
+		if(numMissiles > 0)
 		{
-			//if(numMissiles == 1)
+			ptrCht = getNode(pHeadMissile, 1);
+			while(1)
 			{
-
 				for(uint8_t i = 0;i<BuferSize;i++)
 				{
 					buffer[i]=' ';
 				}
-				sprintf(buffer,"%d,%d,%d,%d",1,ptrCht->character.characterID,ptrCht->character.go_Position.x,ptrCht->character.go_Position.y);
+				sprintf(buffer,"%d,%d,%d,%d",ptrCht->character.objectID,ptrCht->character.characterID,
+						ptrCht->character.go_Position.x,ptrCht->character.go_Position.y);
 				vSendMessage(&buffer,sizeof(buffer));
 				vSendMessage(commit, sizeof(commit));
 				vSendMessage(devider, sizeof(devider));
-//				if(ptrCht->pNext == NULL)
-//				{
-//					cont = false;
-//				}
-//				ptrCht = ptrCht->pNext;
+				if(ptrCht->pNext == NULL)
+				{
+					break;
+				}
+				ptrCht = ptrCht->pNext;
 			}
 		}
 
