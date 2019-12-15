@@ -15,6 +15,11 @@
 #include "KYPD.h"
 #include "uart.h"
 
+#define sWidth 128
+#define sHight 64
+#define BuferSize 12
+
+
 
 /*
  * Name: GameInit
@@ -48,7 +53,10 @@ void vTaskCollisions(void *pvParameters);
  * Description: This task handles the user inputs
  * by getting the keys that are pressed and making sure
  * everything is in place to make the correct implementation.
- * This is an approach that runs in a polling mode.
+ * This is an approach that runs in a polling mode. This task
+ * deletes any task that needs to disapear. Objects in the
+ * linked lists are to be deleted on their corresponding
+ * processing task.
  */
 
 void vKeyPadTask(void *pvParameters);
@@ -64,7 +72,24 @@ void vKeyPadTask(void *pvParameters);
 
 void vPlayerTask(void *pvParameters);
 
+/*
+ * Name: vAlientTask
+ * Parameters: pvParameters: it is optional to be used
+ * Description: Processes all the alliens in the game, providing them
+ * with all the personality characteristics they will hold so that the
+ * game gains some interesting insights, It will delete the aliens from the
+ * linked list as those are ordered to be deleted by the collisions task.
+ */
+void vAlientTask(void *pvParameters);
 
+/*
+ * Name:vMissileTans
+ * Parameters: pvParameters: At this point it is optional to be used
+ * Description: This task constantly takes care of the different positions and
+ * Behavior the aliens will exhibit on the screen.
+ */
+
+void vMissileTask(void *pvParameters);
 
 
 

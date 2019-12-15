@@ -69,7 +69,7 @@ struct go_gameCharacter
 	coordinate go_Position;
 	coordinate go_Speed;
 	dimension dimensions;
-	//xTaskHandle taskHandle;
+	bool visible;
 };
 /*
  * Name: character
