@@ -76,7 +76,6 @@ void vTaskUART(void *pvParameters)
 	//is working in both ways.
 	while (1)
 	{
-		Board_LED_Set(2,false);
 		bytes = Chip_UART_ReadRB(UART_SELECTION, &rxring, &rx_buff, sizeof(rx_buff));
 			if (bytes > 0)
 			{
@@ -87,7 +86,6 @@ void vTaskUART(void *pvParameters)
 				}
 			}
 		}
-		Board_LED_Set(2,true);
 		vTaskDelay(configTICK_RATE_HZ*5);
 	}
 

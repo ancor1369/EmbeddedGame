@@ -6,10 +6,6 @@
  *		Email: ancor1369@gmail.com
  */
 
-#define sWidth 128
-#define sHight 64
-#define BuferSize 12
-
 #include "gameTasks.h"
 
 //go_character variables that are used
@@ -19,6 +15,8 @@
 go_character *pHeadPlayer = NULL;  //Head for the linked list representing the player
 go_character *pHeadMissile = NULL; //Head for the linked list representing the Missiles
 go_character *pHeadAlien = NULL;  //Head for the linked list representing the Aliens
+
+xTaskHandle handle = NULL;
 
 uint8_t numAliens = 0;
 uint8_t numMissiles = 0;
@@ -160,10 +158,6 @@ void vGameInit()
 					&pHeadPlayer->handle);
 
 
-
-	//Create the tasks for missiles and aliens
-
-
 	//Start the scheduler
 	vTaskStartScheduler();
 }
@@ -219,7 +213,6 @@ void vPlayerTask(void *pvParameters)
 				keyPressed = 'N';
 			}
 				break;
-			//Fire!, Yes Fire!!
 			case 'A':
 			{
 				/* Start all the necessary duties to make this happen.
@@ -228,8 +221,7 @@ void vPlayerTask(void *pvParameters)
 				 * 3. Get the handle for the new task
 				 * 4. Initiate the new task for missiles so they go on their own
 				 */
-				//numMissiles += 1;
-				numMissiles = 0;
+				numMissiles += 1;
 				coordinate m =
 				{
 						.x = pHeadPlayer->character.go_Position.x,
@@ -247,22 +239,23 @@ void vPlayerTask(void *pvParameters)
 
 				pHeadMissile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
 				pHeadMissile->character.go_Position.y = pHeadPlayer->character.go_Position.y;
-
 				//add the node to the linked list
-				//go_character *pMisssile = addNode(pHeadMissile, missile);
-
-//				xTaskCreate(vMissileTask,(signed char *)"missileTask",
-//						configMINIMAL_STACK_SIZE,&numMissiles, (tskIDLE_PRIORITY + 1UL),NULL);
-						//&pMisssile->handle);
-						//&pHeadMissile->handle);
+				go_character *pMisssile = addNode(pHeadMissile, missile);
 
 				xTaskCreate(vMissileTask,(signed char *)"missileTask",
-										configMINIMAL_STACK_SIZE,NULL, (tskIDLE_PRIORITY + 1UL),(xTaskHandle *)NULL);
-
+						configMINIMAL_STACK_SIZE,&numMissiles, (tskIDLE_PRIORITY + 1UL),
+						//&pHeadMissile->handle);
+						&pMisssile->handle);
 				keyPressed = 'N';
-
 			}
 				break;
+			case 'B':
+			{
+				go_character *pMisssile = getNode(pHeadMissile, 1);
+				vTaskDelete(pMisssile->handle);
+				keyPressed = 'N';
+			}
+			break;
 			default:
 				break;
 		}
@@ -273,10 +266,8 @@ void vPlayerTask(void *pvParameters)
 
 void vMissileTask(void * pvParameters)
 {
-	/*This task needs to get the missile
-	 * that was assigned to the task and
-	 * will update all its characteristics,
-	 * speed
+	/*This task needs to get the missile that was assigned to the task and
+	 * will update all its characteristics,speed
 	 */
 
 	//uint8_t missileNumber = (uint8_t*)pvParameters;
@@ -288,20 +279,13 @@ void vMissileTask(void * pvParameters)
     //missile = getNode(pHeadMissile, missileNumber);
 	while(1)
 	{
+	  missile->character.go_Position.x += 1;
 
-
-		  //if(missile->character.objectID != 0)
-		  {
-			  //uint8_t speed = missile->character.go_Speed.x / 4;
-			  missile->character.go_Position.x += 1;//speed;
-
-			  //Just to show functioning performance
-			  if(missile->character.go_Position.x >= sWidth)
-			  {
-				  missile->character.go_Position.x = 0;
-			  }
-		  }
-		  vTaskDelay(configTICK_RATE_HZ/20);
+	  if(missile->character.go_Position.x >= sWidth)
+	  {
+		  missile->character.go_Position.x = 0;
+	  }
+	  vTaskDelay(configTICK_RATE_HZ/10);
 	}
 }
 
@@ -314,10 +298,9 @@ void vTaskCollisions(void * pvParameters)
 //	pHeadAlien;
 //	pHeadMissile;
 //	pHeadPlayer;
-
-	char buffer[BuferSize];
 	char commit[] = "Z";
 	char devider[] = "\r\n";
+	char buffer[BuferSize];
 	go_character *ptrCht;
 	while(1)
 	{
@@ -331,10 +314,32 @@ void vTaskCollisions(void * pvParameters)
 		}
 		//Simulate the package construction and then send the message through the interface
 		sprintf(buffer,"%d,%d,%d,%d",1,pHeadPlayer->character.characterID,pHeadPlayer->character.go_Position.x,pHeadPlayer->character.go_Position.y);
-		//It will send only the data so far
 		vSendMessage(&buffer,sizeof(buffer));
 		vSendMessage(commit, sizeof(commit));
 		vSendMessage(devider, sizeof(devider));
+
+		bool cont = true;
+		ptrCht = pHeadMissile;
+		//while(cont)
+		{
+			//if(numMissiles == 1)
+			{
+
+				for(uint8_t i = 0;i<BuferSize;i++)
+				{
+					buffer[i]=' ';
+				}
+				sprintf(buffer,"%d,%d,%d,%d",1,ptrCht->character.characterID,ptrCht->character.go_Position.x,ptrCht->character.go_Position.y);
+				vSendMessage(&buffer,sizeof(buffer));
+				vSendMessage(commit, sizeof(commit));
+				vSendMessage(devider, sizeof(devider));
+//				if(ptrCht->pNext == NULL)
+//				{
+//					cont = false;
+//				}
+//				ptrCht = ptrCht->pNext;
+			}
+		}
 
 
 		//changes done to take the whole thinking up and running.
@@ -360,27 +365,6 @@ void vTaskCollisions(void * pvParameters)
 //			}
 //		}
 
-		bool cont = true;
-		ptrCht = pHeadMissile;
-		//while(cont)
-		//if(numMissiles == 1)
-		{
-
-			for(uint8_t i = 0;i<BuferSize;i++)
-			{
-				buffer[i]=' ';
-			}
-			sprintf(buffer,"%d,%d,%d,%d",1,ptrCht->character.characterID,ptrCht->character.go_Position.x,ptrCht->character.go_Position.y);
-			vSendMessage(&buffer,sizeof(buffer));
-			vSendMessage(commit, sizeof(commit));
-			vSendMessage(devider, sizeof(devider));
-//			if(ptrCht->pNext == NULL)
-//			{
-//				cont = false;
-//			}
-//			ptrCht = ptrCht->pNext;
-		}
-
 
 		/*TODO: Create the physics engine inside this loop.
 		 * Make sure every speed is calculated here
@@ -389,9 +373,12 @@ void vTaskCollisions(void * pvParameters)
 		 *
 		 * Different tasks are created and destroyed inside this one
 		*/
+
+		//This vTaskDelay defines how often the information is sent to the slave
 		vTaskDelay(configTICK_RATE_HZ/20);
 	}
 }
+
 
 /*
  * Driver tasks

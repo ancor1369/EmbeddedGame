@@ -15,6 +15,11 @@
 #include "KYPD.h"
 #include "uart.h"
 
+#define sWidth 128
+#define sHight 64
+#define BuferSize 12
+
+
 
 /*
  * Name: GameInit
