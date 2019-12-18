@@ -74,18 +74,19 @@ void vTaskUART(void *pvParameters)
 	//This is not actually used in the video game, I have
 	//set this into place just to show that the serial communication
 	//is working in both ways.
-	while (1)
-	{
-		bytes = Chip_UART_ReadRB(UART_SELECTION, &rxring, &rx_buff, sizeof(rx_buff));
-			if (bytes > 0)
-			{
-				Chip_UART_SendRB(UART_SELECTION, &txring, &rx_buff, sizeof(rx_buff));
-				for(int i = 0; i<UART_RRB_SIZE; i++)
+		while (1)
+		{
+			bytes = Chip_UART_ReadRB(UART_SELECTION, &rxring, &rx_buff, sizeof(rx_buff));
+				if (bytes > 0)
 				{
-					rx_buff[i]=0;
+					Chip_UART_SendRB(UART_SELECTION, &txring, &rx_buff, sizeof(rx_buff));
+					for(int i = 0; i<UART_RRB_SIZE; i++)
+					{
+						rx_buff[i]=0;
+					}
 				}
-			}
+				vTaskDelay(configTICK_RATE_HZ*100);
 		}
-		vTaskDelay(configTICK_RATE_HZ*5);
+
 	}
 

@@ -14,6 +14,8 @@
 #include "task.h"
 #include "KYPD.h"
 #include "uart.h"
+#include <stdlib.h>
+#include <time.h>
 
 #define sWidth 128
 #define sHight 64
@@ -89,7 +91,9 @@ void vAlientTask(void *pvParameters);
  * Behavior the aliens will exhibit on the screen.
  */
 
-void vMissileTask(void *pvParameters);
+static void vMissileTask(void *pvParameters);
+
+void vCreateMissile();
 
 
 
