@@ -15,6 +15,7 @@
 go_character *pHeadPlayer = NULL;  //Head for the linked list representing the player
 go_character *pHeadMissile = NULL; //Head for the linked list representing the Missiles
 go_character *pHeadAlien = NULL;  //Head for the linked list representing the Aliens
+bool gameOver;
 
 xTaskHandle handle = NULL;
 
@@ -84,11 +85,16 @@ void vGameInit()
 				.x_offset = 5,
 				.y_offset = 5
 	    };
-
+	coordinate speed=
+	{
+			.x=1,
+			.y=1
+	};
 	tankOne.objectID = 0;
 	tankOne.characterID = Tank;
     tankOne.dimensions = dimTank;
     tankOne.go_Position = c;
+    tankOne.go_Speed = speed;
     tankOne.visible = true;
     //data structure gets initialized and ready to be processed
 	pHeadPlayer = createHead(tankOne);
@@ -150,7 +156,7 @@ void vGameInit()
 					configMINIMAL_STACK_SIZE, NULL, (tskIDLE_PRIORITY + 1UL),
 					(xTaskHandle *) NULL);
 
-	xTaskCreate(vTaskCollisions, (signed char *) "TaskCollisions",
+	xTaskCreate(vTaskSendData, (signed char *) "TaskSendData",
 							configMINIMAL_STACK_SIZE, NULL,(tskIDLE_PRIORITY + 1UL),
 							(xTaskHandle *) NULL);
 
@@ -166,37 +172,58 @@ void vGameInit()
 							configMINIMAL_STACK_SIZE,0, (1UL),
 							&pHeadAlien->handle);
 
-	//Start the scheduler
+	//Higher priority task to check collisions.
+	xTaskCreate(vTaskCollision,"Collisions",configMINIMAL_STACK_SIZE,NULL,2,NULL);
+
+
+
 	vTaskStartScheduler();
 }
 
 
 void vCreateMissile()
 {
-	numMissiles += 1;
-	coordinate m =
+
+	if(numMissiles == 0)
 	{
-		.x = pHeadPlayer->character.go_Position.x,
-		.y = pHeadPlayer->character.go_Position.y + dimTank.height/4
-	};
-	character missile =
+		numMissiles += 1;
+		coordinate m =
+		{
+			.x = pHeadPlayer->character.go_Position.x + dimTank.width +2,
+			.y = pHeadPlayer->character.go_Position.y + dimTank.height/4
+		};
+		character missile =
+		{
+			.objectID = numMissiles,
+			.characterID = Bullet,
+			.go_Position = m,
+			.go_Speed = bulletSpeed,
+			.dimensions = dimBullet,
+			.visible = true
+		};
+		//add the node to the linked list
+		go_character *pMisssile = addNode(pHeadMissile, missile);
+		char msg[BuferSize] = "Create: ";
+		sprintf(msg,"MissileTask:%d",pMisssile->character.objectID);
+		xTaskCreate(vMissileTask,(signed char *)msg,configMINIMAL_STACK_SIZE,(void*)numMissiles,1,&pMisssile->handle);
+	}
+	else
 	{
-		.objectID = numMissiles,
-		.characterID = Bullet,
-		.go_Position = m,
-		.go_Speed = bulletSpeed,
-		.dimensions = dimBullet,
-		.visible = true
-	};
-	//add the node to the linked list
-	char msg[BuferSize] = "Create: ";
-	go_character *pMisssile = addNode(pHeadMissile, missile);
-	sprintf(msg,"MissileTask:%d",pMisssile->character.objectID);
-	//xTaskCreate(vMissileTask,(signed char *)msg,configMINIMAL_STACK_SIZE,(void*)numMissiles,1,&pMisssile->handle);
+		go_character *missile = getNode(pHeadMissile, 1);
+		missile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
+		missile->character.go_Position.y = pHeadPlayer->character.go_Position.y+dimTank.height/4;
+	}
+}
+
+
+int iCalculateDistance(go_character *a, go_character * b)
+{
+	return abs(a->character.go_Position.x - b->character.go_Position.x) + abs(a->character.go_Position.y - b->character.go_Position.y);
 }
 
 void vPlayerTask(void *pvParameters)
 {
+
 	while(1)
 	{
 		switch(keyPressed)
@@ -204,7 +231,7 @@ void vPlayerTask(void *pvParameters)
 			//Up
 			case '2':
 			{
-				pHeadPlayer->character.go_Position.y -= 1;
+				pHeadPlayer->character.go_Position.y -= pHeadPlayer->character.go_Speed.y;
 				if(pHeadPlayer->character.go_Position.y <= 0)
 				{
 					pHeadPlayer->character.go_Position.y = sHight;
@@ -215,7 +242,7 @@ void vPlayerTask(void *pvParameters)
 			//Left
 			case '4':
 			{
-				pHeadPlayer->character.go_Position.x -= 1;
+				pHeadPlayer->character.go_Position.x -= pHeadPlayer->character.go_Speed.x;
 				if(pHeadPlayer->character.go_Position.x <= 0)
 				{
 					pHeadPlayer->character.go_Position.x = sWidth;
@@ -226,7 +253,7 @@ void vPlayerTask(void *pvParameters)
 			//Right
 			case '6':
 			{
-				pHeadPlayer->character.go_Position.x += 1;
+				pHeadPlayer->character.go_Position.x += pHeadPlayer->character.go_Speed.x;
 				if(pHeadPlayer->character.go_Position.x >= sWidth)
 				{
 					pHeadPlayer->character.go_Position.x = 0;
@@ -237,7 +264,7 @@ void vPlayerTask(void *pvParameters)
 			//Down
 			case '8':
 			{
-				pHeadPlayer->character.go_Position.y += 1;
+				pHeadPlayer->character.go_Position.y += pHeadPlayer->character.go_Speed.y;
 				if(pHeadPlayer->character.go_Position.y >= sHight)
 				{
 					pHeadPlayer->character.go_Position.y = 0;
@@ -245,24 +272,49 @@ void vPlayerTask(void *pvParameters)
 				keyPressed = 'N';
 			}
 				break;
-			case 'A':
+			case '5':
 			{
-				vCreateMissile("Function");
+
+				vCreateMissile();
 				keyPressed = 'N';
 			}
 				break;
 			case 'B':
 			{
-				go_character *pMisssile = getNode(pHeadMissile, 1);
-				vTaskDelete(pMisssile->handle);
-				deleteNode(pHeadMissile, 1);
+				pHeadPlayer->character.go_Speed.y += 4;
+				keyPressed = 'N';
+			}
+			break;
+			case 'C':
+			{
+				pHeadPlayer->character.go_Speed.y -= 2;
+				if(pHeadPlayer->character.go_Speed.y < 0)
+				{
+					pHeadPlayer->character.go_Speed.y = 1;
+				}
+				keyPressed = 'N';
+			}
+			break;
+			case '0':
+			{
+				pHeadPlayer->character.go_Speed.x -= 2;
+				if(pHeadPlayer->character.go_Speed.x < 0)
+				{
+					pHeadPlayer->character.go_Speed.x = 1;
+				}
+				keyPressed = 'N';
+			}
+			break;
+			case 'F':
+			{
+				pHeadPlayer->character.go_Speed.x += 2;
 				keyPressed = 'N';
 			}
 			break;
 			default:
 				break;
 		}
-		vTaskDelay(configTICK_RATE_HZ/5);
+		vTaskDelay(configTICK_RATE_HZ/10);
 	}
 }
 
@@ -320,8 +372,44 @@ static void vMissileTask(void * pvParameters)
 	  vTaskDelay(configTICK_RATE_HZ/10);
 	}
 }
+void vTaskCollision()
+{
+	go_character *pw = NULL;
+	int distance = 0;
+	while(1)
+	{
+		if(gameOver ==false)
+		{
+			if(numMissiles == 1)
+			{
+				pw = getNode(pHeadMissile, 1);
+				distance = iCalculateDistance(pHeadPlayer, pw);
+				if(distance <= 5)
+				{
+					//Deleta player task
+					vTaskDelete(pHeadPlayer->handle);
+					gameOver = true;
+				}
+				distance = iCalculateDistance(pHeadAlien, pw);
+				if(distance <= 5)
+				{
+					vTaskDelete(pHeadAlien->handle);
+					gameOver = true;
+				}
 
-void vTaskCollisions(void * pvParameters)
+			}
+			distance = iCalculateDistance(pHeadPlayer, pHeadAlien);
+			if(distance <= 5)
+			{
+				//Stop game
+				vTaskDelete(pHeadPlayer->handle);
+				gameOver = true;
+			}
+		}
+		vTaskDelay(configTICK_RATE_HZ/20);
+	}
+}
+void vTaskSendData(void * pvParameters)
 {
 	//this task takes all the linked lists containing the players and computes the
 	//relationships between them, so it is possible to set some of them to disappear as consequence
@@ -335,6 +423,14 @@ void vTaskCollisions(void * pvParameters)
 
 	while(1)
 	{
+		if(numMissiles == 0)
+		{
+			sprintf(buffer,"%d,%d,%d,%d",0,2,-15,1);
+			vSendMessage(&buffer,sizeof(buffer));
+			vSendMessage(commit, sizeof(commit));
+			vSendMessage(devider, sizeof(devider));
+		}
+
 		//At the end of the day this is what needs to be done with all thepHeadMissile->character.go_Position.x = pHeadPlayer->character.go_Position.x;
 		//Characters, which is to extract all their coordinates and use them
 		//to send the whole message with a set of screen updates for the
@@ -349,6 +445,7 @@ void vTaskCollisions(void * pvParameters)
 		vSendMessage(commit, sizeof(commit));
 		vSendMessage(devider, sizeof(devider));
 
+
 		if(numMissiles > 0)
 		{
 			ptrCht = getNode(pHeadMissile, 1);
@@ -358,11 +455,11 @@ void vTaskCollisions(void * pvParameters)
 				//-------------------------------------------------------------------
 				//This functionality is supposed to be done in the corresponding task
 				//however the task refused completely to run correctly as I expected
-				  ptrCht->character.go_Position.x += ptrCht->character.go_Speed.x;
-				  if(ptrCht->character.go_Position.x >= sWidth)
-				  {
-					  ptrCht->character.go_Position.x = 0;
-				  }
+//				  ptrCht->character.go_Position.x += ptrCht->character.go_Speed.x;
+//				  if(ptrCht->character.go_Position.x >= sWidth)
+//				  {
+//					  ptrCht->character.go_Position.x = 0;
+//				  }
 				 ///Section that is supposed to run in a task
 				  //------------------------------------------------------------------
 

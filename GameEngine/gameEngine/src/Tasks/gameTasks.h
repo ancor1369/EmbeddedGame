@@ -10,11 +10,11 @@
 #define GAMETASKS_H_
 #include <llCharacter.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "KYPD.h"
 #include "uart.h"
-#include <stdlib.h>
 #include <time.h>
 
 #define sWidth 128
@@ -41,13 +41,13 @@ void vGameInit();
 void vTaskRunGame(void *pvParameters);
 
 /*
- * Name: vTaskCollisions
+ * Name: vTaskSendData
  * Parameters: a pvParameter to send initialization variables to the task
  * Description: Constantly verifies what is the current state of the
  * characters on the screen and makes sure that
  */
 
-void vTaskCollisions(void *pvParameters);
+void vTaskSendData(void *pvParameters);
 
 
 /*
@@ -93,8 +93,23 @@ void vAlientTask(void *pvParameters);
 
 static void vMissileTask(void *pvParameters);
 
+/*
+ *Name: vCreateMissile
+ *Parameters: none
+ *Description: This function set a new Missile task to run, if there is one of those
+ *tasks running, it will just relaunch the missile from the new location.
+ */
+
 void vCreateMissile();
 
+/*
+ * Name:iCalculateDistance
+ * Parameters: Takes two pointers to two different objects
+ * Description: Calculates distance between two objects on the screen
+ */
+
+int iCalculateDistance(go_character *a, go_character * b);
 
 
+void vTaskCollision();
 #endif /* GAMETASKS_H_ */
