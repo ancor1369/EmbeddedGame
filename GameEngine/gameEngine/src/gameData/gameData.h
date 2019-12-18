@@ -51,8 +51,8 @@ typedef struct go_dimension dimension;
 
 struct go_coordinate
 {
-	unsigned int x;
-	unsigned int y;
+	int x;
+	int y;
 	unsigned int x_offset;
 	unsigned int y_offset;
 };

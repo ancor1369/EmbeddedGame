@@ -17,7 +17,7 @@ struct character_struct
 {
     character character;
     xTaskHandle handle;
-    struct character *pNext;
+    struct character_struct *pNext;
 };    
 /*
  *  Name: node_t
@@ -80,7 +80,7 @@ void printNodes(go_character *pHead);
  * to be eliminated from the linked list
  * Description: The method goes
  */
-void deleteNode(go_character * pHead,character target);
+void deleteNode(go_character * pHead,uint8_t target);
 /*
  * Name: getNode
  * Parameters: node_t pHead
