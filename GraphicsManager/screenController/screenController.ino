@@ -19,14 +19,22 @@ Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 #define MISSILE_WIDTH    16
 
 String inputString = "";
-int x,y=0;
-int xt,yt=0;
-int xmi, ymi = 0;
+int xt,yt=0; //Coordinates extracted from the message
+int x,y=0; //Player
+int xmi, ymi = 200; //Misile
+int xal, yal=0;//Alien
 int scene ;
 int Bitmap;
 
 
-static const unsigned char PROGMEM logo_bmp[] = 
+static const unsigned char PROGMEM tank_bmp[] =
+{
+  0xff, 0xf0, 0xff, 0xf0, 0xff, 0xf0, 0xff, 0xf0, 0x88, 0xe0, 0x88, 0xe0, 0x88, 0xe0, 0x88, 0xff, 
+  0x88, 0xff, 0x88, 0xe0, 0x88, 0xe0, 0x88, 0xe0, 0xff, 0xf0, 0xff, 0xf0, 0xff, 0xf0, 0xff, 0xf0
+};
+
+
+static const unsigned char PROGMEM bmp_alien[] = 
 {
   0x00, 0x00, 0x04, 0x80, 0x0f, 0xc0, 0x0e, 0xe0, 0xcf, 0xf3, 0xc8, 0x03, 0xce, 0x03, 0xc8, 0x13, 
   0x8f, 0xf3, 0x9f, 0xf9, 0xaf, 0xf5, 0x9e, 0x79, 0xfe, 0x7f, 0x0f, 0xf0, 0x02, 0x20, 0x02, 0x20
@@ -39,15 +47,16 @@ static const unsigned char PROGMEM missile_bmp[] =
 
 void setup() { 
   
-  Serial.begin(115200);
+   Serial.begin(115200);   
    inputString.reserve(300);
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3D)) 
   { // Address 0x3D for 128x64
     Serial.println(F("SSD1306 allocation failed"));
     for(;;); // Don't proceed, loop forever
-  }    
-  testanimate(logo_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
+  }      
+  testanimate(tank_bmp, LOGO_WIDTH, LOGO_HEIGHT); // Animate bitmaps
+  
 }
 
 void loop() 
@@ -73,11 +82,15 @@ for(;;) { // Loop forever...
   for(f=0; f< NUMFLAKES; f++) {
     if(f==1)
     {
-      display.drawBitmap(icons[f][XPOS], icons[f][YPOS], bitmap, w, h, SSD1306_WHITE);
+      display.drawBitmap(icons[f][XPOS], icons[f][YPOS], bitmap, w, h, SSD1306_WHITE);      
     }
     if(f==2)
     {
       display.drawBitmap(icons[f][XPOS], icons[f][YPOS], missile_bmp, MISSILE_WIDTH, MISSILE_HEIGHT, SSD1306_WHITE);
+    }
+    if(f==3)
+    {
+      display.drawBitmap(icons[f][XPOS], icons[f][YPOS], bmp_alien, w, h, SSD1306_WHITE);
     }
   }
 
@@ -96,6 +109,11 @@ for(;;) { // Loop forever...
         icons[f][XPOS]   = xmi;
         icons[f][YPOS]   = ymi;       
       }
+      if(f==3)
+      {
+        icons[f][XPOS] = xal;
+        icons[f][YPOS] = yal;
+      }
     }
 
   }
@@ -108,7 +126,7 @@ void serialEvent() {
     // add it to the inputString:
     if(inChar != 'Z')
     {
-        inputString += inChar; 
+        inputString += inChar;         
     }
     // if the incoming character is a newline, set a flag so the main loop can
     // do something about it:
@@ -128,8 +146,12 @@ void serialEvent() {
         xmi=xt;
         ymi=yt;
       }
-      inputString = "";
-      
+      if(Bitmap==3)
+      {
+        xal=xt;
+        yal=yt;
+      }
+      inputString = "";      
     }
   }
 }
