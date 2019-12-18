@@ -18,7 +18,7 @@ go_character* addNode(go_character* pHead, character data)
     //Find the attatchement point for the new node
     //to be inserted
     
-    go_character *pw; //working pointer
+    go_character *pw = NULL; //working pointer
     pw = pHead;    
     while(pw->pNext != NULL)
     {
@@ -44,12 +44,12 @@ go_character* createNode(void)
     return pNew;
 }
 
-void deleteNode(go_character* pHead, character target)
+void deleteNode(go_character* pHead, uint8_t target)
 {
 	go_character* pw= pHead; //Working pointer
 	go_character* ppw=pHead; //Working parent's pointer
     
-    while((pw->character.objectID != target.objectID))
+    while((pw->character.objectID != target))
     {
         ppw=pw;
         pw=pw->pNext;
@@ -62,7 +62,7 @@ void deleteNode(go_character* pHead, character target)
     }
     else
     {
-        printf("Node not found");
+        printf("Node not found\n");
     }
 }
 
@@ -72,7 +72,7 @@ void printNodes(go_character *pHead)
 
 go_character* getNode(go_character* pHead, uint8_t target)
 {
-	go_character* pw; //Worker pointer
+	go_character* pw = NULL; //Worker pointer
     pw = pHead;
     
     while(pw->character.objectID != target)
